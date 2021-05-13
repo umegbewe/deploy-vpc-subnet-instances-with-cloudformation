@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+    VPC:
+      Type: AWS::EC2::VPC::Id
+Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+          - IpProtocol: tcp
+            FromPort: 80
+            ToPort: 80
+            CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+          - IpProtocol: -1
+            FromPort: -1
+            ToPort: -1
+            CidrIp: 0.0.0.0/0
+  badmanServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t3.micro
+      ImageId: "image id goes here without quotes"
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          GroupSet: 
+            - !Ref SecurityGroup
+          SubnetId: "subnet id goes here without quotes"
+      UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            yum update -y
+            yum install -y httpd
+            systemctl start httpd
+            systemctl enable httpd

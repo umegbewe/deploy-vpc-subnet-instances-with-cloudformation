@@ -1,0 +1,7 @@
+[	
+    {
+        "ParameterKey": "VPC",
+        "ParameterValue": "vpc id goes here"
+    }
+
+]
